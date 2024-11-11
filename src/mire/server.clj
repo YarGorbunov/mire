@@ -36,6 +36,11 @@
        (commute (:inhabitants @player/*current-room*) conj player/*name*)
        (commute player/streams assoc player/*name* *out*))
 
+      (doseq [inhabitant (disj @(:inhabitants @player/*current-room*) player/*name*)]
+          (binding [*out* (player/streams inhabitant)]
+           (println (str player/*name* " appears in the room"))
+           (println player/prompt)))
+
       (println (commands/look)) (print player/prompt) (flush)
 
       (try (loop [input (read-line)]

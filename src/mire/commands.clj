@@ -9,6 +9,14 @@
   (alter from disj obj)
   (alter to conj obj))
 
+;; Opposite direction for each direction
+
+(def direction_opposite {
+               "north" "south",
+               "south" "north",
+               "east" "west",
+               "west" "east"})
+
 ;; Command functions
 
 (defn look
@@ -32,6 +40,14 @@
          (move-between-refs player/*name*
                             (:inhabitants @player/*current-room*)
                             (:inhabitants target))
+         (doseq [inhabitant (disj @(:inhabitants @player/*current-room*) player/*name*)]
+          (binding [*out* (player/streams inhabitant)]
+           (println (str player/*name* " exits room through " direction))
+           (println player/prompt)))
+         (doseq [inhabitant (disj @(:inhabitants target) player/*name*)]
+          (binding [*out* (player/streams inhabitant)]
+           (println (str player/*name* " enters room through " (direction_opposite direction)))
+           (println player/prompt)))
          (ref-set player/*current-room* target)
          (look))
        "You can't go that way."))))
