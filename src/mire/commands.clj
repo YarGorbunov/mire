@@ -17,7 +17,9 @@
   (str (:desc @player/*current-room*)
        "\nExits: " (keys @(:exits @player/*current-room*)) "\n"
        (str/join "\n" (map #(str "There is " % " here.\n")
-                           @(:items @player/*current-room*)))))
+                           @(:items @player/*current-room*)))
+       (str/join "\n" (map #(str "Person " % " is here.\n") 
+                           (disj @(:inhabitants @player/*current-room*) player/*name*)))))
 
 (defn move
   "\"♬ We gotta get out of this place... ♪\" Give a direction."
@@ -79,7 +81,7 @@
     (doseq [inhabitant (disj @(:inhabitants @player/*current-room*)
                              player/*name*)]
       (binding [*out* (player/streams inhabitant)]
-        (println message)
+        (println (str player/*name* " says: " message))
         (println player/prompt)))
     (str "You said " message)))
 
