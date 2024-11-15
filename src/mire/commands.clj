@@ -101,6 +101,19 @@
         (println player/prompt)))
     (str "You said " message)))
 
+(defn whisper
+  "Say something out quiet so only one person in the room can hear."
+  [words person]
+  (let [message (str/join " " words)]
+    (let [person_name (str/join " " person)]
+     (if (some #{person_name} (disj @(:inhabitants @player/*current-room*) player/*name*))
+      (do 
+       (binding [*out* (player/streams person_name)]
+        (println (str player/*name* " whispers: " message))
+        (println player/prompt))
+       (str "You said " message " to " person_name))
+      (str person_name " is not here")))))
+
 (defn help
   "Show available commands and what they do."
   []
@@ -123,13 +136,19 @@
                "say" say
                "help" help})
 
+(def commands_with_person 
+              {"whisper" whisper})
+
 ;; Command handling
 
 (defn execute
   "Execute a command that is passed to us."
   [input]
   (try (let [[command & args] (.split input " +")]
-         (apply (commands command) args))
+         (if (some #{"to"} args) 
+          (let [[command_args command_person] (split-at (.indexOf args "to") args)]
+           (apply (commands_with_person command) command_args (vector (remove #{"to"} command_person)))) 
+          (apply (commands command) args)))
        (catch Exception e
          (.printStackTrace e (new java.io.PrintWriter *err*))
          "You can't do that!")))
