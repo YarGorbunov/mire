@@ -10,3 +10,6 @@
 3. Фишки для подземелья
    - Новые комнаты
    - Рандомная генерация комнат (конечная или бесконечная, в целом пох, реализовать можно в любом виде)
+
+### Для запуска:
+Do ./lein run inside the Mire directory to launch the Mire server. Then players can connect by telnetting to port 3333.
