@@ -12,7 +12,8 @@
      (commands/discard item))
    (commute player/streams dissoc player/*name*)
    (commute (:inhabitants @player/*current-room*)
-            disj player/*name*)))
+            disj player/*name*)
+   (commute rooms/players_inventories dissoc player/*name*)))
 
 (defn- get-unique-player-name [name]
   (if (@player/streams name)
@@ -34,6 +35,7 @@
               player/*inventory* (ref #{})]
       (dosync
        (commute (:inhabitants @player/*current-room*) conj player/*name*)
+       (commute rooms/players_inventories assoc player/*name* player/*inventory*)
        (commute player/streams assoc player/*name* *out*))
 
       (doseq [inhabitant (disj @(:inhabitants @player/*current-room*) player/*name*)]

@@ -1,6 +1,7 @@
 (ns mire.rooms)
 
 (def rooms (ref {}))
+(def players_inventories (ref {}))
 
 (defn load-room [rooms file]
   (let [room (read-string (slurp (.getAbsolutePath file)))]
